@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void insertAtEnd(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void display(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void bubbleSort(struct Node** head) {
+    int swapped;
+    struct Node* ptr1;
+    struct Node* lptr = NULL;
+
+    /* Checking for empty list */
+    if (*head == NULL)
+        return;
+
+    do {
+        swapped = 0;
+        ptr1 = *head;
+
+        while (ptr1->next != lptr) {
+            if (ptr1->data > ptr1->next->data) {
+                int temp = ptr1->data;
+                ptr1->data = ptr1->next->data;
+                ptr1->next->data = temp;
+                swapped = 1;
+            }
+            ptr1 = ptr1->next;
+        }
+        lptr = ptr1;
+    } while (swapped);
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    insertAtEnd(&head, 5);
+    insertAtEnd(&head, 2);
+    insertAtEnd(&head, 8);
+    insertAtEnd(&head, 3);
+    insertAtEnd(&head, 1);
+
+    printf("Before sorting: ");
+    display(head);
+
+    bubbleSort(&head);
+
+    printf("After sorting: ");
+    display(head);
+
+    return 0;
+}

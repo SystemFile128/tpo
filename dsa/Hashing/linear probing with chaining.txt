@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SIZE 10
+
+typedef struct Faculty {
+    char name[50];
+    char department[50];
+    int id;
+    struct Faculty* next;
+} Faculty;
+
+int hash(int key) {
+    return key % SIZE;
+}
+
+void insert(Faculty faculty, Faculty table[]) {
+    int i = hash(faculty.id);
+    if (table[i].id == 0) {
+        table[i] = faculty;
+    } else {
+        Faculty* curr = &table[i];
+        while (curr->next != NULL) {
+            curr = curr->next;
+        }
+        Faculty* new_faculty = malloc(sizeof(Faculty));
+        *new_faculty = faculty;
+        curr->next = new_faculty;
+    }
+}
+
+Faculty* search(int id, Faculty table[]) {
+    int i = hash(id);
+    Faculty* curr = &table[i];
+    while (curr != NULL && curr->id != id) {
+        curr = curr->next;
+    }
+    return curr;
+}
+
+void display(Faculty table[]) {
+    printf("Faculty table:\n");
+    printf("%-15s%-15s%-15s\n", "Name", "Department", "ID");
+    for (int i = 0; i < SIZE; i++) {
+        if (table[i].id == 0) {
+            printf("%-15s%-15s%-15s\n", "-", "-", "-");
+        } else {
+            Faculty* curr = &table[i];
+            while (curr != NULL) {
+                printf("%-15s%-15s%-15d\n", curr->name, curr->department, curr->id);
+                curr = curr->next;
+            }
+        }
+    }
+}
+
+int main() {
+    Faculty table[SIZE] = {0};
+    Faculty faculty1 = {"John Doe", "Computer Science", 1001, NULL};
+    Faculty faculty2 = {"Jane Smith", "Physics", 2001, NULL};
+    Faculty faculty3 = {"David Lee", "Mathematics", 3001, NULL};
+    Faculty faculty4 = {"Sarah Jones", "Biology", 4001, NULL};
+    insert(faculty1, table);
+    insert(faculty2, table);
+    insert(faculty3, table);
+    insert(faculty4, table);
+    display(table);
+    Faculty* result = search(2001, table);
+    if (result != NULL) {
+        printf("\nFaculty found:\nName: %s\nDepartment: %s\nID: %d\n", result->name, result->department, result->id);
+    } else {
+        printf("\nFaculty not found\n");
+    }
+    return 0;
+}
