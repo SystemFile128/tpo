@@ -1,0 +1,122 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node {
+    int data;
+    struct node *left, *right;
+    int lthread, rthread;
+};
+
+struct node *insert(struct node *root, int data) {
+    struct node *ptr = root;
+    struct node *par = NULL;
+    while(ptr != NULL) {
+        if(data == ptr->data) {
+            printf("Duplicate node\n");
+            return root;
+        }
+        par = ptr;
+        if(data < ptr->data) {
+            if(ptr->lthread == 0)
+                ptr = ptr->left;
+            else
+                break;
+        }
+        else {
+            if(ptr->rthread == 0)
+                ptr = ptr->right;
+            else
+                break;
+        }
+    }
+
+    struct node *tmp = (struct node*)malloc(sizeof(struct node));
+    tmp->data = data;
+    tmp->lthread = 1;
+    tmp->rthread = 1;
+    if(par == NULL) {
+        root = tmp;
+        tmp->left = NULL;
+        tmp->right = NULL;
+    }
+    else if(data < par->data) {
+        tmp->left = par->left;
+        tmp->right = par;
+        par->lthread = 0;
+        par->left = tmp;
+    }
+    else {
+        tmp->left = par;
+        tmp->right = par->right;
+        par->rthread = 0;
+        par->right = tmp;
+    }
+    return root;
+}
+
+struct node *inorderSuccessor(struct node *ptr) {
+    if(ptr->rthread == 1)
+        return ptr->right;
+    ptr = ptr->right;
+    while(ptr->lthread == 0)
+        ptr = ptr->left;
+    return ptr;
+}
+
+void inorder(struct node *root) {
+    if(root == NULL) {
+        printf("Tree is empty\n");
+        return;
+    }
+    struct node *ptr = root;
+    while(ptr->lthread == 0)
+        ptr = ptr->left;
+    while(ptr != NULL) {
+        printf("%d ",ptr->data);
+        ptr = inorderSuccessor(ptr);
+    }
+    }
+
+void preorder(struct node *root) {
+if(root == NULL) {
+printf("Tree is empty\n");
+return;
+}
+struct node *ptr = root;
+while(ptr != NULL) {
+printf("%d ",ptr->data);
+if(ptr->lthread == 0)
+ptr = ptr->left;
+else if(ptr->rthread == 0)
+ptr = ptr->right;
+else {
+ptr = inorderSuccessor(ptr);
+}
+}
+}
+
+int main() {
+struct node *root = NULL;
+int choice, data;
+while(1) {
+printf("\n1. Insert\n");
+printf("2. Inorder Traversal\n");
+printf("3. Preorder Traversal\n");
+printf("4. Exit\n");
+printf("Enter your choice: ");
+scanf("%d",&choice);
+switch(choice) {
+case 1: printf("Enter the value to be inserted: ");
+scanf("%d",&data);
+root = insert(root, data);
+break;
+case 2: inorder(root);
+break;
+case 3: preorder(root);
+break;
+case 4: exit(0);
+default: printf("Invalid choice\n");
+}
+}
+return 0;
+}
